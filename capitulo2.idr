@@ -1,46 +1,46 @@
 -- Ejercicios Capitulo 2
 
--- Ejercicio 1 Facil
+-- Ejercicio 1 
 
 -- (String,String,String)
 -- List String
 -- ((Char, String), Char)
 
--- Ejercicio 2 Facil
+-- Ejercicio 2 
 
 palindrome : String -> Bool
-palindrome str = str == (reverse str)
+palindrome str = (== (reverse str))
 
 -- Ejercicio 3
 palindrome2 : String -> Bool
 palindrome2 str = toLower str == ((reverse . toLower) str)
 
--- Ejercicio 4 Facil
+-- Ejercicio 4 
 
 palindrome3 : String -> Bool
 palindrome3 str = if length str > 10 then palindrome2 str else False
 
--- Ejercicio 5 Facil
+-- Ejercicio 5 
 
 palindrome4 : Nat -> String -> Bool
 palindrome4 num str = if length str > num then palindrome2 str else False
 
--- Ejercicio 6 Facil
+-- Ejercicio 6 
 
 counts : String -> (Nat, Nat)
 counts str = ((length . words) str, length str)
 
--- Ejercicio 7 Facil
+-- Ejercicio 7 
 
 top_ten : Ord a => List a -> List a
 top_ten = (Prelude.List.take 10) . reverse . sort
 
--- Ejercicio 8 Facil
+-- Ejercicio 8 
 
 over_length : Nat -> List String -> Nat
 over_length num list = length (filter ((>num) . length) list)
 
--- Ejercicio 9 Facil
+-- Ejercicio 9 
 -- Debe ser puesto en un fichero aparte para funcionar
 showPalindrome : String -> String
 showPalindrome str = "The string is palindrome: " ++ show (palindrome2 str)
