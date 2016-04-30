@@ -155,13 +155,13 @@ getEntry pos store = let store_items = items store in
                               Just id => Just (index id (items store) ++ "\n", store)
 
 getMatchedEntries : (substring : String) -> (store : DataStore) -> Maybe (String, DataStore)
-getMatchedEntries substring store = let res = (filter (== substring) (items store)) in
-                                        case fst res of
+getMatchedEntries substring store = let entries = (filter (isInfixOf substring) (items store)) in
+                                        case fst entries of
                                              Z => Just ("No matched entries\n", store)
-                                             (S k) => Just (formatEntries (snd res), store)
+                                             (S k) => Just (formatEntries (snd entries), store)
                                         where
                                           formatEntries : Vect n String -> String
-                                          formatEntries v = "Entries: " ++ foldl (\s1, s2 => s1 ++ "\n"++ s2) "" v
+                                          formatEntries {n = (S k)} v = "Entries: \n" ++ foldl1 (\s1, s2 => s1 ++ "\n" ++ s2) v ++ "\n"
 
 processInput : DataStore -> String -> Maybe (String, DataStore)
 processInput store input = case parse input of
