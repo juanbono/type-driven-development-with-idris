@@ -111,6 +111,11 @@ sumEntries {n} pos x y = case integerToFin pos n of
 
 -- Type-driven Implementation of an Interactive Data Store
 
+-- 1 Add a size command which displays the number of entries in the store
+-- 2 Add a search command which displays all of the entries in the store containing a given substring
+-- 3 Extend search to print the index of each result, as well as the string.
+-- TODO
+
 data DataStore : Type where
   MkData : (size : Nat) -> (items : Vect size String) -> DataStore
 
@@ -127,7 +132,7 @@ addToStore (MkData size items) newItem = MkData _ (addToData items)
     addToData [] = [newItem]
     addToData (x :: xs) = x :: addToData xs
 
-data Command = Add String | Get Integer | Quit
+data Command = Add String | Get Integer | Quit | Size | Search String
 
 parseCommand : (cmd : String) -> (args : String) -> Maybe Command
 parseCommand "add" str = Just (Add str)
@@ -135,6 +140,8 @@ parseCommand "get" val = case all isDigit (unpack val) of
                               False => Nothing
                               True => Just (Get (cast val))
 parseCommand "quit" "" = Just Quit
+parseCommand "size" "" = Just Size
+parseCommand "search" str = Just (Search str)
 parseCommand _ _ = Nothing
 
 parse : (input : String) -> Maybe Command
@@ -147,20 +154,22 @@ getEntry pos store = let store_items = items store in
                               Nothing => Just ("Out of range\n", store)
                               Just id => Just (index id (items store) ++ "\n", store)
 
+getMatchedEntries : (substring : String) -> (store : DataStore) -> Maybe (String, DataStore)
+getMatchedEntries substring store = let res = (filter (== substring) (items store)) in
+                                        case fst res of
+                                             Z => Just ("No matched entries\n", store)
+                                             (S k) => Just (formatEntries (snd res), store)
+                                        where
+                                          formatEntries : Vect n String -> String
+                                          formatEntries v = "Entries: " ++ foldl (\s1, s2 => s1 ++ "\n"++ s2) "" v
+
 processInput : DataStore -> String -> Maybe (String, DataStore)
 processInput store input = case parse input of
                                 Nothing => Just ("Invalid command\n", store)
                                 Just (Add item) => Just ("ID " ++ show (size store) ++ "\n", addToStore store item)
                                 Just (Get pos) => getEntry pos store
                                 Just Quit => Nothing
+                                Just Size => Just ("The store has " ++ show (size store) ++ " entries\n", store)
+                                Just (Search str) => getMatchedEntries str store
 main : IO ()
 main = replWith (MkData _ []) "Command: " processInput
-
--- 1 Add a size command which displays the number of entries in the store
--- TODO
-
--- 2 Add a search command which displays all of the entries in the store containing a given substring
--- TODO
-
--- 3 Extend search to print the index of each result, as well as the string.
--- TODO
