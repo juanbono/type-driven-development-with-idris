@@ -61,18 +61,32 @@ Neg ty => Neg (Expr ty) where
   abs = Abs
 
 -- 1. Implement Show for the Expr type.
--- TODO
+Show num => Show (Expr num) where
+    show (Val x) = show x
+    show (Add x y) = show x ++ " + " ++  show y
+    show (Sub x y) = show x ++ " - " ++ show y
+    show (Mul x y) = show x ++ " * " ++ show y
+    show (Div x y) = show x ++ " div " ++ show y
+    show (Abs x) = "|" ++ show x ++ "|"
 
 -- 2. Implement Eq for the Expr type. Expressions should be considered equal if their evaluation is equal.
--- TODO
+(Eq num, Integral num, Neg num) => Eq (Expr num) where
+    (==) x y = eval x == eval y
 
 -- 3. Implement Cast to allow conversions from Expr num to any appropiately constrained type num
--- TODO
+(Integral num, Neg num, Integral a, Neg a) => Cast (Expr num) a where
+    cast orig = ?noSeQueHacer
 
 -- Interfaces Parameterised by Type -> Type
 
 -- 1. Implement Functor for Expr.
--- TODO
+Functor Expr where
+    map func (Val x) = Val (func x)
+    map func (Add x y) = Add (map func x) (map func y)
+    map func (Sub x y) = Sub (map func x) (map func y)
+    map func (Mul x y) = Mul (map func x) (map func y)
+    map func (Div x y) = Div (map func x) (map func y)
+    map func (Abs x) = Abs (map func x)
 
 -- 2. Implement Eq and Foldable for Vect.
 -- TODO
