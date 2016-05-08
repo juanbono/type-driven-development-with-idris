@@ -74,8 +74,8 @@ Show num => Show (Expr num) where
     (==) x y = eval x == eval y
 
 -- 3. Implement Cast to allow conversions from Expr num to any appropiately constrained type num
-(Integral num, Neg num, Integral a, Neg a) => Cast (Expr num) a where
-    cast orig = ?noSeQueHacer
+(Integral num, Neg num) => Cast (Expr num) num where
+    cast orig = eval orig
 
 -- Interfaces Parameterised by Type -> Type
 
@@ -89,4 +89,15 @@ Functor Expr where
     map func (Abs x) = Abs (map func x)
 
 -- 2. Implement Eq and Foldable for Vect.
--- TODO
+data Vect : Nat -> Type -> Type where
+  Nil : Vect Z a
+  (::) : a -> Vect n a -> Vect (S n) a
+
+Eq a => Eq (Vect n a) where
+    (==) [] [] = True
+    (==) (x :: xs) (y :: ys) = x == y && xs == ys
+
+Foldable (Vect n) where
+    foldr f x [] = x
+    foldr f x (y :: ys) = f y (foldr f x ys)
+--  foldl viene de regalo, si esta implementado foldlr
