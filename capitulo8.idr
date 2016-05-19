@@ -1,7 +1,5 @@
 module capitulo8
 
-import Data.Vect
-
 -- Guaranteeing Equivalence of Data with Equality Types
 
 -- 1. Implement the following function, which states that if you add the same value onto the front of equal lists,
@@ -47,6 +45,11 @@ my_plusCommutes (S k) (S j) = let prf = my_plusCommutes k j in ?nose
 --    as follows, using a helper function reverse' which takes an accumulating argument to build the
 --    reversed list.
 --    Complete this definition by implementing the holes.
+
+data Vect : Nat -> Type -> Type where
+  Nil : Vect Z a
+  (::) : a -> Vect n a -> Vect (S n) a
+
 my_reverse : Vect n a -> Vect n a
 my_reverse xs = reverse' [] xs
   where reverse' : Vect n a -> Vect m a -> Vect (n + m) a
@@ -61,4 +64,4 @@ head_unequal : DecEq a => {xs : Vect n a} -> {ys : Vect n a} -> (contra : (x = y
 tail_unequal : DecEq a => {xs : Vect n a} -> {ys : Vect n a} -> (contra : (xs = ys) -> Void) -> ((x :: xs) = (y :: ys)) -> Void
 
 -- 2. Implement DecEq for Vect. Begin with the following implementation header:
--- DecEq a => DecEq (Vect n a) where Usar definicion propia de Vect
+DecEq a => DecEq (Vect n a) where
