@@ -77,12 +77,14 @@ myRepl str f = do putStr str
                   putStrLn (f arg)
                   myRepl str f
 
-myReplWith : (state : a) ->  (prompt : String) -> (onInput : a -> String -> Maybe (String, a)) -> IO ()
+myReplWith : (state : a) -> (prompt : String) -> (onInput : a -> String -> Maybe (String, a)) -> IO ()
 myReplWith state prompt onInput = do putStr prompt
-                                     case onInput state prompt of
+                                     inputStr <- getLine
+                                     case onInput state inputStr of
                                           Nothing => pure ()
-                                          Just (msg, newState) => myReplWith newState msg onInput
--- ** Nota: Esta funcion pasa el type checker pero no la probe para ver si es correcta. Probar **
+                                          Just (outputStr, newState) => do
+                                            putStrLn outputStr
+                                            myReplWith newState prompt onInput
 
 -- Reading and Validating Dependent Types
 
