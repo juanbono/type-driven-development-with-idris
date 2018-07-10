@@ -110,6 +110,23 @@ readAndSave = do list <- readToBlank
 
 -- 3. Write a function readVectFile : (filename : String) -> IO (n ** Vect n String) which reads the contents of a file into a dependent pair
 --    containing a length and a Vect of that length. If there are any errors, it should return an empty vector.
+readFile2Vect : (f : File) -> IO (n ** Vect n String)
+readFile2Vect f = do
+  eof <- fEOF f
+  if eof
+    then do
+      closeFile f
+      pure (_ ** [])
+    else do
+      Right fileLine <- fGetLine f | Left error => pure (_ ** [])
+      (_ ** xs) <- readFile2Vect f
+      pure (_ ** fileLine :: xs)
+
 readVectFile : (filename : String) -> IO (n ** Vect n String)
-readVectFile filename = ?readVectFile_rhs
--- Esta es hardcore
+readVectFile filename = do
+  filename <- getLine
+  if length filename > 0
+    then do
+      Right file <- openFile filename Read | Left error => pure (_ ** [])
+      readFile2Vect file
+    else pure (_ ** [])
